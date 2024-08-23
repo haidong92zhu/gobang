@@ -1,12 +1,11 @@
 
 import { Application, Graphics, Container } from 'pixi.js';
-import { store } from './store';
-const size = 15;
-const singleSize = 30;
+import { store, size, singleSize } from './store';
+import { isWin } from './referee';
 // pixi绘制
 const pixiApp = new Application({
     resizeTo: window,
-    backgroundColor: 0x1099bb,
+    backgroundColor: 'grey',
     antialias: true,
 });
 document.body.appendChild(pixiApp.view as unknown as Node);
@@ -41,7 +40,7 @@ for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
         const rectangle = new Graphics();
         rectangle.beginFill('green');
-        rectangle.alpha = 0.1;
+        rectangle.alpha = 0;
         rectangle.drawRect(0, 0, singleSize, singleSize);
         rectangle.position.set((-size / 2 + i) * singleSize, (-size / 2 + j) * singleSize);
         rectangle.endFill();
@@ -49,6 +48,7 @@ for (let i = 0; i < size; i++) {
         // 可交互
         rectangle.eventMode = 'static';
         rectangle.onclick = () => {
+            if (store.currentArray[i][j] !== 0) return;
             if (store.player === 'white') {
                 const circle = new Graphics();
                 circle.beginFill('white');
@@ -56,6 +56,10 @@ for (let i = 0; i < size; i++) {
                 circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
                 circle.endFill();
                 myContainer.addChild(circle);
+                store.currentArray[i][j] = -1;
+                if (isWin({x: i, y: j}, store.player)) {
+                    console.log(store.player, ' win the game!');
+                }
                 store.player = 'black';
             } else {
                 const circle = new Graphics();
@@ -64,15 +68,19 @@ for (let i = 0; i < size; i++) {
                 circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
                 circle.endFill();
                 myContainer.addChild(circle);
+                store.currentArray[i][j] = 1;
+                if (isWin({x: i, y: j}, store.player)) {
+                    console.log(store.player, ' win the game!');
+                }
                 store.player = 'white';
             }
         };
-        rectangle.onmouseenter = () => {
-            console.log('mouseenter');
-        };
-        rectangle.onmouseout = () => {
-            console.log('mouseout');
-        }
+        // rectangle.onmouseenter = () => {
+        //     console.log('mouseenter');
+        // };
+        // rectangle.onmouseout = () => {
+        //     console.log('mouseout');
+        // }
     }
 }
 
