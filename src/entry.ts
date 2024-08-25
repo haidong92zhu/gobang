@@ -1,19 +1,21 @@
-
 import { Application, Graphics, Container } from 'pixi.js';
 import { store, size, singleSize } from './store';
 import { isWin } from './referee';
+import { updateTitle } from './main';
 // pixi绘制
 const pixiApp = new Application({
     resizeTo: window,
-    backgroundColor: 'grey',
+    backgroundColor: '#e9e5e1',
     antialias: true,
 });
 document.body.appendChild(pixiApp.view as unknown as Node);
 
 // 绘制棋盘
 const myContainer = new Container();
+const piecesContainer = new Container();
 // 相对于根节点偏移
 myContainer.position.set(pixiApp.view.width / 2, pixiApp.view.height / 2);
+piecesContainer.position.set(pixiApp.view.width / 2, pixiApp.view.height / 2);
 // 竖线
 for (let i = Math.ceil(- size / 2); i < size / 2; i++) {
     const line = new Graphics();
@@ -56,7 +58,7 @@ for (let i = 0; i < size; i++) {
                 circle.drawCircle(0, 0, singleSize * 2 / 5);
                 circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
                 circle.endFill();
-                myContainer.addChild(circle);
+                piecesContainer.addChild(circle);
                 store.currentArray[i][j] = -1;
                 if (isWin({x: i, y: j}, store.player)) {
                     console.log(store.player, ' win the game!');
@@ -69,7 +71,7 @@ for (let i = 0; i < size; i++) {
                 circle.drawCircle(0, 0, singleSize * 2 / 5);
                 circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
                 circle.endFill();
-                myContainer.addChild(circle);
+                piecesContainer.addChild(circle);
                 store.currentArray[i][j] = 1;
                 if (isWin({x: i, y: j}, store.player)) {
                     console.log(store.player, ' win the game!');
@@ -77,15 +79,16 @@ for (let i = 0; i < size; i++) {
                 }
                 store.player = 'white';
             }
+            updateTitle();
         };
-        // rectangle.onmouseenter = () => {
-        //     console.log('mouseenter');
-        // };
-        // rectangle.onmouseout = () => {
-        //     console.log('mouseout');
-        // }
     }
 }
 
+
 // 自定义Container最后需要添加到app.stage
 pixiApp.stage.addChild(myContainer);
+pixiApp.stage.addChild(piecesContainer);
+
+export function resetPieces() {
+    piecesContainer.removeChildren();
+}

@@ -6,8 +6,20 @@ const array = new Array(size);
 for (let i = 0; i < size; i++) {
     array[i] = new Array(size).fill(0);
 }
-export const store = {
+export let store = {
     player: 'black',
     currentArray: array,
     winner: '',
+}
+
+export const resetStore = () => {
+    const array = new Array(size);
+    for (let i = 0; i < size; i++) {
+        array[i] = new Array(size).fill(0);
+    }
+    store = {
+        player: 'black',
+        currentArray: array,
+        winner: '',
+    }
 }
