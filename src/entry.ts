@@ -39,8 +39,8 @@ for (let i = Math.ceil(- size / 2); i < size / 2; i++) {
 for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
         const rectangle = new Graphics();
-        rectangle.beginFill('green');
-        rectangle.alpha = 0;
+        rectangle.beginFill('yellow');
+        rectangle.alpha = 0.2;
         rectangle.drawRect(0, 0, singleSize, singleSize);
         rectangle.position.set((-size / 2 + i) * singleSize, (-size / 2 + j) * singleSize);
         rectangle.endFill();
@@ -48,6 +48,7 @@ for (let i = 0; i < size; i++) {
         // 可交互
         rectangle.eventMode = 'static';
         rectangle.onclick = () => {
+            if (store.winner) return;
             if (store.currentArray[i][j] !== 0) return;
             if (store.player === 'white') {
                 const circle = new Graphics();
@@ -59,6 +60,7 @@ for (let i = 0; i < size; i++) {
                 store.currentArray[i][j] = -1;
                 if (isWin({x: i, y: j}, store.player)) {
                     console.log(store.player, ' win the game!');
+                    store.winner = store.player;
                 }
                 store.player = 'black';
             } else {
@@ -71,6 +73,7 @@ for (let i = 0; i < size; i++) {
                 store.currentArray[i][j] = 1;
                 if (isWin({x: i, y: j}, store.player)) {
                     console.log(store.player, ' win the game!');
+                    store.winner = store.player;
                 }
                 store.player = 'white';
             }

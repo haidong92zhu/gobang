@@ -9,4 +9,5 @@ for (let i = 0; i < size; i++) {
 export const store = {
     player: 'black',
     currentArray: array,
+    winner: '',
 }
