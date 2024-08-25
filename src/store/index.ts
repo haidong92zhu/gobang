@@ -17,9 +17,6 @@ export let store = {
 }
 
 export const start = (machine: boolean, machineColor: number) => {
-    store.player = 'black';
-    store.currentArray = array;
-    store.winner = '';
     if (machine) {
         aIService.setColor(machineColor);
         if (machineColor === 1) {

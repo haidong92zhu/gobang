@@ -12,7 +12,7 @@ export const Start = (props: { reset: boolean }) => {
             setMachineColor(-1);
             setEnable(true);
         }
-    }, [props.reset]);
+    },[props]);
     
     return <div className={`start ${enable ? '': ' hide'}`} >
         <select value={machine ? 'machine': 'ptp'} onChange={(e) => {
@@ -26,7 +26,7 @@ export const Start = (props: { reset: boolean }) => {
             <option value="ptp">双人</option>
             <option value="machine">人机</option>
         </select>
-        <select  value={machineColor === 1 ? 'white': 'black'} onChange={(e) => {
+        {machine && <select  value={machineColor === 1 ? 'white': 'black'} onChange={(e) => {
             if (e.target.value === 'black') {
                 setMachineColor(-1);
             } else {
@@ -35,7 +35,8 @@ export const Start = (props: { reset: boolean }) => {
         }}>
             <option value="black">执黑</option>
             <option value="white">执白</option>
-        </select>
+        </select>}
+        
         <button onClick={() => {
             start(machine, machineColor)
             setEnable(false);

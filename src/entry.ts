@@ -82,6 +82,7 @@ export function addChess(x: number, y: number, color: number) {
     if (isWin({x, y}, store.player)) {
         console.log(store.player, ' win the game!');
         store.winner = store.player;
+        return;
     }
     togglePlayer();
 }
