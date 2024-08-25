@@ -6,19 +6,21 @@ import { resetStore, store } from './store/index.ts'
 import { Title } from './component/title.tsx'
 import './main.less'
 import { resetPieces } from './entry'
+import { Start } from './component/start.tsx'
 
 const reactRoot = createRoot(document.getElementById('root')!);
 
-function reStart() {
+function reStart(reset = false) {
   resetStore();
   resetPieces();
-  updateTitle();
+  updateTitle(reset);
 }
 
-export function updateTitle() {
+export function updateTitle(reset = false) {
   reactRoot.render(
     <StrictMode>
-      <Title player={store.player} winner={store.winner} reStart={reStart}/>
+      <Start reset={reset} />
+      <Title player={store.player} winner={store.winner} reStart={reStart} />
     </StrictMode>
   )
 }

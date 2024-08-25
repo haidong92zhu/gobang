@@ -1,5 +1,5 @@
 import { Application, Graphics, Container } from 'pixi.js';
-import { store, size, singleSize } from './store';
+import { store, size, singleSize, togglePlayer } from './store';
 import { isWin } from './referee';
 import { updateTitle } from './main';
 // pixi绘制
@@ -53,31 +53,9 @@ for (let i = 0; i < size; i++) {
             if (store.winner) return;
             if (store.currentArray[i][j] !== 0) return;
             if (store.player === 'white') {
-                const circle = new Graphics();
-                circle.beginFill('white');
-                circle.drawCircle(0, 0, singleSize * 2 / 5);
-                circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
-                circle.endFill();
-                piecesContainer.addChild(circle);
-                store.currentArray[i][j] = -1;
-                if (isWin({x: i, y: j}, store.player)) {
-                    console.log(store.player, ' win the game!');
-                    store.winner = store.player;
-                }
-                store.player = 'black';
+                addChess(i, j, -1);
             } else {
-                const circle = new Graphics();
-                circle.beginFill('black');
-                circle.drawCircle(0, 0, singleSize * 2 / 5);
-                circle.position.set((Math.ceil(-size / 2) + i) * singleSize, (Math.ceil(-size / 2)+ j) * singleSize);
-                circle.endFill();
-                piecesContainer.addChild(circle);
-                store.currentArray[i][j] = 1;
-                if (isWin({x: i, y: j}, store.player)) {
-                    console.log(store.player, ' win the game!');
-                    store.winner = store.player;
-                }
-                store.player = 'white';
+                addChess(i, j, 1);
             }
             updateTitle();
         };
@@ -91,4 +69,19 @@ pixiApp.stage.addChild(piecesContainer);
 
 export function resetPieces() {
     piecesContainer.removeChildren();
+}
+
+export function addChess(x: number, y: number, color: number) {
+    const circle = new Graphics();
+    circle.beginFill(color === 1 ? 'black' : 'white');
+    circle.drawCircle(0, 0, singleSize * 2 / 5);
+    circle.position.set((Math.ceil(-size / 2) + x) * singleSize, (Math.ceil(-size / 2)+ y) * singleSize);
+    circle.endFill();
+    piecesContainer.addChild(circle);
+    store.currentArray[x][y] = color;
+    if (isWin({x, y}, store.player)) {
+        console.log(store.player, ' win the game!');
+        store.winner = store.player;
+    }
+    togglePlayer();
 }
