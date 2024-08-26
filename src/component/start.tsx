@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
-import { start } from "../store";
+import { StoreInstance } from "../store";
 
-export const Start = (props: { reset: boolean }) => {
+export const Start = () => {
     const [machine, setMachine] = useState(false);
     const [machineColor, setMachineColor] = useState(-1);
     const [enable, setEnable] = useState(true);
 
     useEffect(() => {
-        if (props.reset) {
-            setMachine(false);
-            setMachineColor(-1);
+        if (!StoreInstance.isPlaying) {
             setEnable(true);
         }
-    },[props]);
+    });
     
-    return <div className={`start ${enable ? '': ' hide'}`} >
+    return <div className={`start${enable ? '': ' hide'}`} >
         <select value={machine ? 'machine': 'ptp'} onChange={(e) => {
             if (e.target.value === 'machine') {
                 setMachine(true);
@@ -38,7 +36,7 @@ export const Start = (props: { reset: boolean }) => {
         </select>}
         
         <button onClick={() => {
-            start(machine, machineColor)
+            StoreInstance.startGame(machine, machineColor);
             setEnable(false);
         }}>开始</button>
     </div>

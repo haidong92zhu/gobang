@@ -1,12 +1,30 @@
-import { store, size } from "./store";
+import { pixiAddCheese, resetPieces } from "../cheeseBoard";
+import { updateTitle } from "../main";
+import { PlayerEnum, StoreInstance, size } from "../store";
+
+export function addChess(x: number, y: number, color: PlayerEnum) {
+    StoreInstance.cheeseArray[x][y] = color;
+    pixiAddCheese(x, y, color);
+    if (isWin({ x, y }, StoreInstance.player)) {
+        StoreInstance.winner = StoreInstance.player;
+        return;
+    }
+    StoreInstance.togglePlayer();
+}
+
+export function reStart(backToTitle: boolean = false) {
+    resetPieces();
+    StoreInstance.reset(backToTitle);
+    updateTitle();
+}
 
 export function isWin(
     coordinate: { x: number; y: number },
-    currentPlayer: string
+    color: PlayerEnum
 ) {
     const { x, y } = coordinate;
-    const currentNum = currentPlayer === "black" ? 1 : -1;
-    const array = store.currentArray;
+    const currentNum = color;
+    const array = StoreInstance.cheeseArray;
 
     // x,y 所在位置，只要大于5个连接的就赢了
     // x
@@ -57,8 +75,8 @@ export function isWin(
     // -xy
     maxNum = 0;
     nextX = x
-     nextY = y;
-    while ( nextX < size && nextY >= 0 && array[nextX][nextY] === currentNum) {
+    nextY = y;
+    while (nextX < size && nextY >= 0 && array[nextX][nextY] === currentNum) {
         nextX++;
         nextY--;
         maxNum++;

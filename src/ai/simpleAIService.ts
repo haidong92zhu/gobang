@@ -1,4 +1,5 @@
-import { size } from "../store";
+import { addChess } from "../action";
+import { size, StoreInstance } from "../store";
 interface IPoint {
     x: number;
     y: number;
@@ -8,8 +9,9 @@ export interface IAIService {
     point: IPoint;
     started: boolean;
     color: number;
-    getPoint: (chessData: number[][],
-        started: boolean) => void;
+    setColor: (color: number) => void;
+    start: () => void;
+    playNext: () => void;
 }
 
 export class SimpleAIService implements IAIService {
@@ -29,6 +31,20 @@ export class SimpleAIService implements IAIService {
 
     setColor(color: number) {
         this.color = color;
+    }
+
+    start() {
+        if (StoreInstance.player === this.color) {
+            const nextPoint = this.getPoint(StoreInstance.cheeseArray, true);
+            addChess(nextPoint.x, nextPoint.y, this.color);
+        }
+    }
+
+    playNext() {
+        if (StoreInstance.player === this.color) {
+            const nextPoint = this.getPoint(StoreInstance.cheeseArray, false);
+            addChess(nextPoint.x, nextPoint.y, this.color);
+        }
     }
 
     getPoint(chessData: number[][], started: boolean) {
@@ -70,11 +86,11 @@ export class SimpleAIService implements IAIService {
         }
         return score;
     }
+
     getScoreByDirection(chessData: number[][], x: number, y: number, direction: number) {
         let score = 0;
         let count = 0;
         let emptyCount = 0;
-        let emptyIndex = 0;
         for (let i = 0; i < 5; i++) {
             const newX = x + i * this.getDirectionX(direction);
             const newY = y + i * this.getDirectionY(direction);
@@ -83,7 +99,6 @@ export class SimpleAIService implements IAIService {
             }
             if (chessData[newX][newY] === 0) {
                 emptyCount++;
-                emptyIndex = i;
             } else if (chessData[newX][newY] === this.color) {
                 count++;
             } else {

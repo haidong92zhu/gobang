@@ -1,29 +1,24 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import './entry.ts'
-import { resetStore, store } from './store/index.ts'
 import { Title } from './component/title.tsx'
-import './main.less'
-import { resetPieces } from './entry'
+import './main.css'
 import { Start } from './component/start.tsx'
+import { reStart } from './action/index.ts'
+import { StoreInstance } from './store/index.ts'
+import { drawCheeseBoard } from './cheeseBoard';
 
+// 绘制棋盘
 const reactRoot = createRoot(document.getElementById('root')!);
 
-function reStart(reset = false) {
-  resetStore();
-  resetPieces();
-  updateTitle(reset);
-}
-
-export function updateTitle(reset = false) {
+export function updateTitle() {
   reactRoot.render(
     <StrictMode>
-      <Start reset={reset} />
-      <Title player={store.player} winner={store.winner} reStart={reStart} />
+      <Start/>
+      <Title player={StoreInstance.player} winner={StoreInstance.winner} reStart={reStart}/>
     </StrictMode>
   )
 }
 
 updateTitle();
+drawCheeseBoard();
 
