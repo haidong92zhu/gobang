@@ -1,4 +1,5 @@
 import { IAIService, SimpleAIService } from "../ai/simpleAIService";
+import { SimpleAIService2 } from "../ai/simpleAIService2";
 
 export const size = 15;
 export const singleSize = 30;
@@ -21,7 +22,7 @@ class Store {
         this.player = PlayerEnum.black;
         this.cheeseArray = getEmptyArray(size);
         this.winner = PlayerEnum.none;
-        this.AIServiec = new SimpleAIService();
+        this.AIServiec = new SimpleAIService2();
     }
 
     static instance() {

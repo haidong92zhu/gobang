@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { StoreInstance } from "../store";
 
 export const Start = () => {
-    const [machine, setMachine] = useState(false);
+    const [machine, setMachine] = useState(true);
     const [machineColor, setMachineColor] = useState(-1);
     const [enable, setEnable] = useState(true);
 

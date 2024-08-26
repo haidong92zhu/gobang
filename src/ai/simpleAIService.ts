@@ -1,6 +1,6 @@
 import { addChess } from "../action";
 import { size, StoreInstance } from "../store";
-interface IPoint {
+export interface IPoint {
     x: number;
     y: number;
 }
