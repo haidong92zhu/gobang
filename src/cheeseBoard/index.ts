@@ -1,4 +1,4 @@
-import { Application, Graphics, Container } from 'pixi.js';
+import { Application, Graphics, Container, Text } from 'pixi.js';
 import { StoreInstance, size, singleSize, PlayerEnum } from '../store';
 import { updateTitle } from '../main';
 import { addChess } from '../action';
@@ -77,11 +77,21 @@ export function resetPieces() {
     piecesContainer.removeChildren();
 }
 
-export function pixiAddCheese(x: number, y: number, color: number) {
+export function pixiAddCheese(x: number, y: number, color: number, step?: number) {
     const circle = new Graphics();
-    circle.beginFill(color === 1 ? 'black' : 'white');
+    circle.beginFill(color === PlayerEnum.black ? 'black' : 'white');
     circle.drawCircle(0, 0, singleSize * 2 / 5);
     circle.position.set((Math.ceil(-size / 2) + x) * singleSize, (Math.ceil(-size / 2) + y) * singleSize);
     circle.endFill();
     piecesContainer.addChild(circle);
+    if (step) {
+        const number = new Text(step);
+        number.style = {
+            fill: color === PlayerEnum.black?'white': 'black',
+            fontSize: singleSize * 3 / 5,
+            align: 'center',
+        };
+        number.position.set((Math.ceil(-size / 2) + x ) * singleSize, (Math.ceil(-size / 2) + y) * singleSize);
+        piecesContainer.addChild(number);
+    }
 }

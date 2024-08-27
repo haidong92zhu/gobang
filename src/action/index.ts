@@ -4,7 +4,7 @@ import { PlayerEnum, StoreInstance, size } from "../store";
 
 export function addChess(x: number, y: number, color: PlayerEnum) {
     StoreInstance.cheeseArray[x][y] = color;
-    pixiAddCheese(x, y, color);
+    pixiAddCheese(x, y, color, StoreInstance.step);
     if (isWin({ x, y }, StoreInstance.player)) {
         StoreInstance.winner = StoreInstance.player;
         return;
@@ -20,73 +20,74 @@ export function reStart(backToTitle: boolean = false) {
 
 export function isWin(
     coordinate: { x: number; y: number },
-    color: PlayerEnum
+    color: PlayerEnum,
+    board: number[][] = StoreInstance.cheeseArray,
 ) {
     const { x, y } = coordinate;
     const currentNum = color;
-    const array = StoreInstance.cheeseArray;
 
     // x,y 所在位置，只要大于5个连接的就赢了
     // x
     let maxNum = 0;
     let nextX = x;
-    while (nextX >= 0 && array[nextX][y] === currentNum) {
+    while (nextX >= 0 && board[nextX][y] === currentNum) {
         nextX--;
         maxNum++;
     }
     nextX = x + 1;
-    while (nextX < size && array[nextX][y] === currentNum) {
+    while (nextX < size && board[nextX][y] === currentNum) {
         nextX++;
         maxNum++;
     }
-    if (maxNum >= 5) return 'win';
+    if (maxNum >= 5) return true;
 
     // y
     maxNum = 0;
     let nextY = y;
-    while (nextY >= 0 && array[x][nextY] === currentNum) {
+    while (nextY >= 0 && board[x][nextY] === currentNum) {
         nextY--;
         maxNum++;
     }
     nextY = y + 1;
-    while (nextY < size && array[x][nextY] === currentNum) {
+    while (nextY < size && board[x][nextY] === currentNum) {
         nextY++;
         maxNum++;
     }
-    if (maxNum >= 5) return 'win';
+    if (maxNum >= 5) return true;
 
     // xy
     maxNum = 0;
     nextX = x
     nextY = y;
-    while (nextX >= 0 && nextY >= 0 && array[nextX][nextY] === currentNum) {
+    while (nextX >= 0 && nextY >= 0 && board[nextX][nextY] === currentNum) {
         nextX--;
         nextY--;
         maxNum++;
     }
     nextX = x + 1;
     nextY = y + 1;
-    while (nextX < size && nextY < size && array[nextX][nextY] === currentNum) {
+    while (nextX < size && nextY < size && board[nextX][nextY] === currentNum) {
         nextX++;
         nextY++;
         maxNum++;
     }
-    if (maxNum >= 5) return 'win';
+    if (maxNum >= 5) return true;
     // -xy
     maxNum = 0;
     nextX = x
     nextY = y;
-    while (nextX < size && nextY >= 0 && array[nextX][nextY] === currentNum) {
+    while (nextX < size && nextY >= 0 && board[nextX][nextY] === currentNum) {
         nextX++;
         nextY--;
         maxNum++;
     }
     nextX = x - 1;
     nextY = y + 1;
-    while (nextX >= 0 && nextY < size && array[nextX][nextY] === currentNum) {
+    while (nextX >= 0 && nextY < size && board[nextX][nextY] === currentNum) {
         nextX--
         nextY++;
         maxNum++;
     }
-    if (maxNum >= 5) return 'win';
+    if (maxNum >= 5) return true;
+    return false;
 }
