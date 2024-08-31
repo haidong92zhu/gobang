@@ -46,24 +46,41 @@ export class DifficultAIService implements IAIService {
 
     start() {
         if (StoreInstance.player === this.color) {
-            const nextPoint = { x: Math.floor(size / 2), y: Math.floor(size / 2) };
-            addChess(nextPoint.x, nextPoint.y, this.color);
+            
+            if (StoreInstance.anotherAI) {
+                setTimeout(() => {
+                    const nextPoint = { x: Math.floor(size / 2), y: Math.floor(size / 2) };
+                    addChess(nextPoint.x, nextPoint.y, this.color);
+                }, 1000);
+            } else {
+                const nextPoint = { x: Math.floor(size / 2), y: Math.floor(size / 2) };
+                addChess(nextPoint.x, nextPoint.y, this.color);
+            }
         }
     }
 
     playNext() {
         if (StoreInstance.player === this.color) {
-            const nextPoint = this.getPoint(StoreInstance.cheeseArray);
-            addChess(nextPoint.x, nextPoint.y, this.color);
+            if (StoreInstance.anotherAI) {
+                setTimeout(() => {
+                    const nextPoint = this.getPoint(StoreInstance.cheeseArray);
+                    addChess(nextPoint.x, nextPoint.y, this.color);
+                }, 1000);
+            } else {
+                const nextPoint = this.getPoint(StoreInstance.cheeseArray);
+                addChess(nextPoint.x, nextPoint.y, this.color);
+            }
         }
     }
 
     getPoint(chessData: number[][]): IPoint {
-        const MAX_DEPTH = 0; // 设置搜索深度
+        const MAX_DEPTH = 1; // 设置搜索深度
+        const enemyColor = this.color === PlayerEnum.black ? PlayerEnum.white : PlayerEnum.black;
 
-        const minimax = (board: number[][], depth: number, isMaximizing: boolean): number => {
-            if (depth === 0) {
-                return this.cPoint(board, this.color);
+        const minimax = (board: number[][], depth: number, isMaximizing: boolean, prePoint: IPoint): number => {
+            const preScore = this.calPoint(prePoint.x, prePoint.y, board, !isMaximizing);
+            if (depth === 0 || isWin(prePoint, isMaximizing ? enemyColor : this.color, board)) {
+                return preScore;
             }
 
             if (isMaximizing) {
@@ -71,9 +88,8 @@ export class DifficultAIService implements IAIService {
                 for (let i = 0; i < board.length; i++) {
                     for (let j = 0; j < board[i].length; j++) {
                         if (board[i][j] === 0) {
-                            if (isWin({ x: i, y: j }, this.color, board)) return Infinity;
                             board[i][j] = this.color; // AI's move
-                            const score = minimax(board, depth - 1, false);
+                            const score = preScore + minimax(board, depth - 1, false, { x: i, y: j });
                             board[i][j] = 0; // Undo move
                             bestScore = Math.max(score, bestScore);
                         }
@@ -85,10 +101,8 @@ export class DifficultAIService implements IAIService {
                 for (let i = 0; i < board.length; i++) {
                     for (let j = 0; j < board[i].length; j++) {
                         if (board[i][j] === 0) {
-                            const enemyColor =  this.color === PlayerEnum.black ? PlayerEnum.white : PlayerEnum.black;
-                            if (isWin({ x: i, y: j }, enemyColor, board)) return -Infinity;
-                            board[i][j] = enemyColor// Player's move
-                            const score = minimax(board, depth - 1, true);
+                            board[i][j] = enemyColor; // Player's move
+                            const score = preScore + minimax(board, depth - 1, true, { x: i, y: j });
                             board[i][j] = 0; // Undo move
                             bestScore = Math.min(score, bestScore);
                         }
@@ -97,16 +111,15 @@ export class DifficultAIService implements IAIService {
                 return bestScore;
             }
         }
-
-        function findBestMove(board: number[][]): { x: number; y: number } {
+        const findBestMove = (board: number[][]): { x: number; y: number } => {
             let bestScore = -Infinity;
             let move = { x: -1, y: -1 };
 
             for (let i = 0; i < board.length; i++) {
                 for (let j = 0; j < board[i].length; j++) {
                     if (board[i][j] === 0) {
-                        board[i][j] = 2; // AI's move
-                        const score = minimax(board, MAX_DEPTH, false);
+                        board[i][j] = this.color; // AI's move
+                        const score = minimax(board, MAX_DEPTH, false, { x: i, y: j });
                         board[i][j] = 0; // Undo move
                         if (score > bestScore) {
                             bestScore = score;
@@ -123,22 +136,23 @@ export class DifficultAIService implements IAIService {
     }
 
 
-    cPoint(cheeseBoard: number[][], color: PlayerEnum) {
-        let score = -Infinity;
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                if (cheeseBoard[i][j] !== 0) continue;
-                const tempScore = this.calPoint(i, j, cheeseBoard, color);
-                if (tempScore > score) {
-                    score = tempScore;
+    // cPoint(cheeseBoard: number[][], color: PlayerEnum, isMaximizing: boolean) {
+    //     let score = -Infinity;
+    //     for (let i = 0; i < size; i++) {
+    //         for (let j = 0; j < size; j++) {
+    //             if (cheeseBoard[i][j] !== 0) continue;
+    //             const tempScore = this.calPoint(i, j, cheeseBoard, color);
+    //             if (tempScore > score) {
+    //                 score = tempScore;
 
-                }
-            }
-        }
-        return score;
-    }
+    //             }
+    //         }
+    //     }
+    //     return isMaximizing? score : -score;
+    // }
 
-    private calPoint(x: number, y: number, cheeseBoard: number[][], player: number): number {
+    private calPoint(x: number, y: number, cheeseBoard: number[][], isMaximizing: boolean): number {
+        const player = isMaximizing ? this.color : this.color === PlayerEnum.black ? PlayerEnum.white : PlayerEnum.black;
         const directions = [
             [1, 0], [0, 1], [1, 1], [1, -1]
         ];

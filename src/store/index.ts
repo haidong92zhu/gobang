@@ -42,6 +42,7 @@ class Store {
             this.AIServiec.start();
             this.anotherAI = new SimpleAIService();
             this.anotherAI.setColor(PlayerEnum.white);
+            this.anotherAI.start();
         } else if (machine) {
             this.AIServiec.setColor(machineColor);
             this.AIServiec.start();
@@ -58,13 +59,13 @@ class Store {
             this.AIServiec.playNext();
             if (this.anotherAI) {
                 this.anotherAI.playNext();
-            }
+            }            
         }
     }
 
     public reset(backToTitle: boolean = false) {
         this.player = PlayerEnum.black;
-        this.step = 0;
+        this.step = 1;
         this.cheeseArray = getEmptyArray(size);
         this.winner = PlayerEnum.none;
         if (backToTitle) {
