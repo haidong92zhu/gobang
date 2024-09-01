@@ -1,6 +1,7 @@
 import { IAIService } from "../ai/AIService";
 // import { SimpleAIService } from "../ai/simpleAIService";
-import { DifficultAIService } from "../ai/difficultAIService";
+// import { DifficultAIService } from "../ai/difficultAIService";
+import { HDAIService } from "../ai/hdAIService";
 import { SimpleAIService } from "../ai/simpleAIService";
 
 export const size = 15;
@@ -27,7 +28,7 @@ class Store {
         this.step = 0;
         this.cheeseArray = getEmptyArray(size);
         this.winner = PlayerEnum.none;
-        this.AIServiec = new DifficultAIService();
+        this.AIServiec = new HDAIService();
         
     }
 
